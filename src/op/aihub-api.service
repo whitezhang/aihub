@@ -1,0 +1,21 @@
+[Unit]
+Description=AiHub API (Node)
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/root/deployaihub
+# blog=8080 / eduhub=8081 / aihub=8082
+Environment=PORT=8082
+Environment=NODE_ENV=production
+Environment=AIHUB_ENV=production
+# 生产库须独立路径，禁止 local.sqlite
+Environment=DB_PATH=/var/lib/aihub/prod.sqlite
+# 密钥与 ingest 覆盖放仓根 .env（不入库）；单位文件不写明文密钥
+EnvironmentFile=-/root/deployaihub/.env
+ExecStart=/usr/bin/node --experimental-sqlite --experimental-strip-types src/rd/server/index.ts
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target

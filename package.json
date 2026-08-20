@@ -1,0 +1,42 @@
+{
+  "name": "aihub",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "node --watch --experimental-sqlite --experimental-strip-types src/rd/server/index.ts",
+    "dev:web": "vite --config src/rd/web/vite.config.ts",
+    "build:client": "vue-tsc -p src/rd/web/tsconfig.json --noEmit && vite build --config src/rd/web/vite.config.ts",
+    "build": "npm run build:client",
+
+    "start": "node scripts/start-api.mjs",
+    "restart": "node scripts/start-api.mjs",
+    "lint": "eslint .",
+    "typecheck": "vue-tsc -p src/rd/web/tsconfig.json --noEmit && tsc -p src/rd/server/tsconfig.json --noEmit",
+    "test": "node --experimental-sqlite ./node_modules/vitest/vitest.mjs run",
+    "test:critical": "node --experimental-sqlite ./node_modules/vitest/vitest.mjs run src/qa/critical"
+  },
+  "dependencies": {
+    "element-plus": "^2.9.7",
+    "pinia": "^3.0.1",
+    "vue": "^3.5.13",
+    "vue-router": "^4.5.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.22.0",
+    "@types/node": "^22.13.10",
+    "@vitejs/plugin-vue": "^5.2.1",
+    "eslint": "^9.22.0",
+    "eslint-plugin-vue": "^10.0.0",
+    "globals": "^16.0.0",
+    "typescript": "^5.8.2",
+    "typescript-eslint": "^8.26.1",
+    "vite": "^6.2.1",
+    "vitest": "^3.0.8",
+    "vue-eslint-parser": "^10.1.1",
+    "vue-tsc": "^2.2.8"
+  }
+}

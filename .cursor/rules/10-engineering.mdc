@@ -1,0 +1,27 @@
+---
+description: AiHub 工程规范 — Vue/Node/TS 架构原则、语言与风格
+globs: "**/*.{ts,tsx,vue,js,mjs,cjs,css,scss,html,json}"
+alwaysApply: false
+---
+
+# Engineering Standards
+
+## 架构原则
+
+- 前端（Vue 3）：页面与组件只通过 `/api` 交互；状态用 Pinia；路由用 Vue Router。
+- 后端：单进程 Node ≥22、ESM、原生 `node:http`；禁止引入 Express（或同类厚框架）除非用户明确批准。
+- 数据访问：仅服务端使用 `node:sqlite`；migration 放在 `src/rd/server/db/migrations/`。
+- 评测：串行 `spawn`；禁止并发跑多任务评测队列抢占资源。
+- 构建：开发机完成 lint/typecheck/build；线上仅静态 + API，允许 `npm ci --omit=dev`。
+
+## 语言规范
+
+- TypeScript / ESM 优先；与 Node 内置模块使用 `node:` 前缀（如 `node:http`、`node:sqlite`）。
+- Vue 组件：优先 Composition API + `<script setup>`。
+- 异步错误必须显式处理；API 返回稳定的错误结构，避免裸抛到进程崩溃（评测子进程除外，需有超时与回收）。
+
+## 代码风格
+
+- 跟随项目既有格式；用 `npm run lint` / `npm run typecheck` 作为风格与类型门禁。
+- 命名清晰、避免缩写堆砌；公共 API 与表字段命名变更须先确认。
+- 不做无关的大范围格式化；新增文件放入 `src/rd`（研发）或 `src/qa`（测试）或 `src/op`（部署）。

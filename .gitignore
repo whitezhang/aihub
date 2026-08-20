@@ -1,0 +1,38 @@
+# Dependencies & build
+node_modules/
+# 正式前端产物在仓根 output/（本机构建后提交）；忽略中间 dist
+src/rd/web/dist/
+dist/
+.output/
+*.local
+
+# Env & secrets
+.env
+.env.*
+!.env.example
+
+# SQLite (local / production DB files — keep migrations only)
+*.sqlite
+*.sqlite-journal
+*.db
+src/rd/server/db/local.sqlite
+
+# Logs & caches
+logs/
+*.log
+.npm
+.cache/
+coverage/
+.vitest/
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# Cursor — ignore all under .cursor except rules & skills
+.cursor/*
+!.cursor/rules/
+!.cursor/skills/

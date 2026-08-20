@@ -1,0 +1,32 @@
+---
+description: AiHub 项目架构约束 — 目录职责、硬约束、测试要求
+alwaysApply: true
+---
+
+# Project Architecture
+
+## 目录结构与职责
+
+| 路径 | 职责 |
+|------|------|
+| `docs/` | 文档 |
+| `src/op/` | 部署脚本与运维 |
+| `src/rd/` | 研发代码（前端 + Node API + DB migrations） |
+| `src/rd/server/db/migrations/` | SQLite schema / migration |
+| `src/qa/` | 测试代码 |
+| `src/qa/critical/` | 关键路径测试（`make test-critical`） |
+
+## 不可违反的约束
+
+1. **确认优先**：不明确处（尤其领域设计）必须与用户确认，不得擅自主张。
+2. **目录边界**：文档 / 部署 / 研发 / 测试代码不得混放，职责见上表。
+3. **前后端边界**：业务逻辑只在 Node API；前端禁止直连 SQLite 或直读库文件。
+4. **SQLite**：仅后端 `node:sqlite`；库路径用 `DB_PATH`；不提交生产库；本地默认建议 `src/rd/server/db/local.sqlite`。
+5. **评测与部署**：评测串行不并行；Nginx 托管静态并反代 `/api`→`8082`；线上禁止完整 build，仅可轻量 `npm ci --omit=dev`。
+
+## 测试要求
+
+- 关键测放在 `src/qa/`；关键用例放在 `src/qa/critical/`。
+- 日常改动至少保证 `make test-critical`（或 `make verify`）可通过。
+- 合并前或大改后跑 `make verify-full`。
+- 测试框架：Vitest；全量：`npx vitest run`；关键：`npx vitest run src/qa/critical`。
