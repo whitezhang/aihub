@@ -21,7 +21,7 @@
 
 | 项 | 路径 / 值 |
 |---|---|
-| git 工作树 | `/root/deployaihub` |
+| git 工作树 | `/root/deploy/aihub` |
 | Nginx 站点根 | `/www/wwwroot/ai.jsoner.cn/` |
 | API 端口 | `8082`（blog 8080 / eduhub 8081） |
 | systemd | `aihub-api.service` |
@@ -31,8 +31,8 @@
 
 ```bash
 # 1) clone（目录名按约定）
-git clone <repo-url> /root/deployaihub
-cd /root/deployaihub
+git clone <repo-url> /root/deploy/aihub
+cd /root/deploy/aihub
 
 # 2) 生产 .env（含 PH 密钥等；不入库）
 # systemd 已设 AIHUB_ENV/DB_PATH；.env 只放密钥与 ingest 覆盖
@@ -65,7 +65,7 @@ git add output && git commit -m "build: refresh client output" && git push
 服务器：
 
 ```bash
-cd /root/deployaihub
+cd /root/deploy/aihub
 bash src/op/deploy.sh
 # 仅静态：SKIP_SERVER=1 bash src/op/deploy.sh
 # 仅 API： SKIP_CLIENT=1 bash src/op/deploy.sh

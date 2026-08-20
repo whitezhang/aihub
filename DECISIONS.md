@@ -8,7 +8,7 @@
 
 - **背景**：需在服务器发布 AiHub，路径与 eduhub/blog 错开。
 - **决策**：
-  1. git 工作树：`/root/deployaihub`；Nginx 站点根：`/www/wwwroot/ai.jsoner.cn/`；API：`8082`。
+  1. git 工作树：`/root/deploy/aihub`；Nginx 站点根：`/www/wwwroot/ai.jsoner.cn/`；API：`8082`。
   2. 部署脚本：`src/op/deploy.sh` / `deploy-client.sh` / `deploy-server.sh`；systemd：`aihub-api.service`；nginx 片段：`nginx-api-snippet.conf`。
   3. 前端本机 `npm run build` → 仓根 `output/` 提交；服务器只 rsync + `npm ci --omit=dev`，禁止线上 Vite build；`deploy` 不做 `git clean`。
   4. 生产 `DB_PATH=/var/lib/aihub/prod.sqlite`；密钥用仓根 `.env`（`EnvironmentFile`），不入库。
