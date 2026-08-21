@@ -9,10 +9,10 @@ WorkingDirectory=/root/deploy/aihub
 Environment=PORT=8082
 Environment=NODE_ENV=production
 Environment=AIHUB_ENV=production
-# 生产库须独立路径，禁止 local.sqlite
+# 生产库默认路径（可被 EnvironmentFile 覆盖）
 Environment=DB_PATH=/var/lib/aihub/prod.sqlite
-# 密钥与 ingest 覆盖放仓根 .env（不入库）；单位文件不写明文密钥
-EnvironmentFile=-/root/deploy/aihub/.env
+# 权威配置：src/op/conf/production.env（入库）
+EnvironmentFile=-/root/deploy/aihub/src/op/conf/production.env
 ExecStart=/usr/bin/node --experimental-sqlite --experimental-strip-types src/rd/server/index.ts
 Restart=on-failure
 RestartSec=3

@@ -6,10 +6,10 @@ dist/
 .output/
 *.local
 
-# Env & secrets
+# Env leftovers（勿再使用仓根 .env；权威配置在 src/op/conf/）
 .env
 .env.*
-!.env.example
+
 
 # SQLite (local / production DB files — keep migrations only)
 *.sqlite
@@ -36,3 +36,4 @@ Thumbs.db
 .cursor/*
 !.cursor/rules/
 !.cursor/skills/
+.skill-overview/

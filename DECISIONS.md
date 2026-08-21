@@ -14,6 +14,16 @@
   4. 生产 `DB_PATH=/var/lib/aihub/prod.sqlite`；密钥用仓根 `.env`（`EnvironmentFile`），不入库。
 - **后果**：发布流程与 eduhub 同形；端口与站点与 blog/eduhub 隔离。
 
+## 2026-08-21 — 测试/生产配置放入 src/op/conf，部署绑定 production
+
+- **背景**：PH 等密钥靠人工改仓根 `.env` 不标准；需一眼区分测试与生产，且不另开 `/var/lib/.../env` 路径；本地测试不挂 nginx。
+- **决策**：
+  1. 权威配置：`src/op/conf/test.env`（本地）与 `src/op/conf/production.env`（生产）；模板 `*.env.example` 与真实 `*.env` 均入库（remote 为 private）。
+  2. 本地：`npm start` / `dev` 加载 `test.env`；不部署测试站、不挂 nginx。
+  3. 线上：`bash src/op/deploy.sh`（默认 production）；`ensure-env.sh` 只校验 PH / `AIHUB_ENV` / `DB_PATH`；systemd `EnvironmentFile` 直接指向 `src/op/conf/production.env`。
+  4. 废弃仓根 `.env` / `.env.example`，避免与 `conf/` 双源。
+- **后果**：`git pull` / `deploy` 即可带上生产凭证；仓库权限等同密钥权限，协作者需可信。
+
 ## Template
 
 ```markdown

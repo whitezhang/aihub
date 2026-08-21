@@ -25,9 +25,11 @@ export type RuntimeConfig = {
   ingest: IngestConfig;
 };
 
-/** Load `.env` from cwd into process.env (does not override existing). */
-export function loadDotEnv(cwd = process.cwd()): void {
-  const file = path.join(cwd, ".env");
+function projectRoot(): string {
+  return path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../../..");
+}
+
+function applyEnvFile(file: string): void {
   if (!fs.existsSync(file)) return;
   const text = fs.readFileSync(file, "utf8");
   for (const rawLine of text.split(/\r?\n/)) {
@@ -44,6 +46,26 @@ export function loadDotEnv(cwd = process.cwd()): void {
       value = value.slice(1, -1);
     }
     if (process.env[key] === undefined) process.env[key] = value;
+  }
+}
+
+/**
+ * Load env files into process.env (does not override existing).
+ * Order:
+ * 1. AIHUB_CONF (explicit path)
+ * 2. src/op/conf/production.env when AIHUB_ENV=production already (e.g. systemd)
+ * 3. otherwise src/op/conf/test.env (local npm start)
+ */
+export function loadDotEnv(_cwd = process.cwd()): void {
+  const root = projectRoot();
+  const confDir = path.join(root, "src/op/conf");
+  if (process.env.AIHUB_CONF) {
+    applyEnvFile(process.env.AIHUB_CONF);
+  }
+  if (process.env.AIHUB_ENV === "production") {
+    applyEnvFile(path.join(confDir, "production.env"));
+  } else {
+    applyEnvFile(path.join(confDir, "test.env"));
   }
 }
 

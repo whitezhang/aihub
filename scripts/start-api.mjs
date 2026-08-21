@@ -94,4 +94,4 @@ child.on("exit", (code, signal) => {
   process.exit(code ?? 1);
 });
 
-process.stdout.write(`[start] API ${host}:${port}\n`);
+process.stdout.write(`[start] API ${host}:${port} (conf: src/op/conf/test.env)\n`);
