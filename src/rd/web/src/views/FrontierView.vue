@@ -193,9 +193,6 @@ function onPageChange(p: number) {
       <div>
         <p class="eyebrow">AiHub · Daily Hot</p>
         <h1 class="hot-title">热点</h1>
-        <p class="sub">
-          按天回看 GitHub / Product Hunt 榜单；右侧趋势来自历史日快照（非小时）。
-        </p>
       </div>
       <button
         type="button"
@@ -369,12 +366,6 @@ function onPageChange(p: number) {
   font-weight: 800;
   letter-spacing: -0.02em;
   color: #9a3412;
-}
-.sub {
-  margin: 0.45rem 0 0;
-  color: #6b7280;
-  line-height: 1.55;
-  max-width: 36rem;
 }
 .latest-btn {
   border: 1px solid #fdba74;
