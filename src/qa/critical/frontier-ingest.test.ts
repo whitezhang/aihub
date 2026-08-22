@@ -117,6 +117,19 @@ describe("frontier history + isolation (critical)", () => {
     expect(body.items[0].title).toBe("owner/old");
   });
 
+  it("keeps requested day when source has no snapshot that day", async () => {
+    const res = await fetch(
+      `${baseUrl}/api/items?category=frontier&source=producthunt&day=2026-08-21`,
+    );
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.day).toBe("2026-08-21");
+    expect(body.items).toEqual([]);
+    expect(body.total).toBe(0);
+    // Must not silently jump to another source-success day (e.g. 2026-08-20).
+    expect(body.day).not.toBe("2026-08-20");
+  });
+
   it("treats missing success as cold-start eligible", () => {
     expect(hasAnySuccess(db, "producthunt")).toBe(false);
     const day = ensureDay(db, "producthunt", "2026-08-20");

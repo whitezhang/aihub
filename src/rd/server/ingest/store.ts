@@ -260,12 +260,25 @@ export function listFrontier(
       page,
       pageSize,
       total: 0,
-      day: null,
+      day: day ?? null,
       availableDays: [],
     };
   }
 
-  const selectedDay = day && availableDays.includes(day) ? day : availableDays[0]!;
+  // Explicit day that this source never succeeded: keep the requested day,
+  // return empty — do not silently fall back to the latest success day.
+  if (day && !availableDays.includes(day)) {
+    return {
+      items: [],
+      page,
+      pageSize,
+      total: 0,
+      day,
+      availableDays,
+    };
+  }
+
+  const selectedDay = day ?? availableDays[0]!;
   const dayRow = successDayId(db, source, selectedDay);
   if (!dayRow) {
     return {

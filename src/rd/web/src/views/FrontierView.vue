@@ -9,7 +9,14 @@ type SourceTab = Source;
 const sort = ref<Sort>("heat");
 const sourceTab = ref<SourceTab>("github");
 const selectedDay = ref<string>("");
-const availableDays = ref<string[]>([]);
+/** Per-source success days — calendar must not union GitHub + Product Hunt. */
+const daysBySource = ref<Record<Source, string[]>>({
+  github: [],
+  producthunt: [],
+});
+const availableDays = computed(
+  () => daysBySource.value[sourceTab.value] ?? [],
+);
 const loading = ref(false);
 const error = ref<string | null>(null);
 const items = ref<CatalogItem[]>([]);
@@ -59,13 +66,10 @@ function formatDayLabel(day: string): string {
   return `${m}月${d}日 · 周${week}`;
 }
 
-function mergeDays(a: string[], b: string[]): string[] {
-  return [...new Set([...a, ...b])].sort((x, y) => (x < y ? 1 : -1));
-}
-
 async function load() {
   loading.value = true;
   error.value = null;
+  const requestedDay = selectedDay.value || undefined;
   try {
     const data = await fetchItems({
       category: "frontier",
@@ -73,15 +77,21 @@ async function load() {
       sort: sort.value,
       page: page.value,
       pageSize,
-      day: selectedDay.value || undefined,
+      day: requestedDay,
     });
     items.value = data.items;
     total.value = data.total;
-    if (data.availableDays?.length) {
-      availableDays.value = mergeDays(availableDays.value, data.availableDays);
+    if (data.availableDays) {
+      daysBySource.value = {
+        ...daysBySource.value,
+        [sourceTab.value]: data.availableDays,
+      };
     }
-    if (data.day) {
+    // Honor explicit selection; only adopt server day on first load / when it matches.
+    if (data.day && (!requestedDay || data.day === requestedDay)) {
       selectedDay.value = data.day;
+    } else if (!requestedDay && availableDays.value[0]) {
+      selectedDay.value = availableDays.value[0];
     }
   } catch (e) {
     error.value = e instanceof Error ? e.message : "加载失败";
@@ -92,7 +102,7 @@ async function load() {
   }
 }
 
-/** Prefetch available days from both sources once. */
+/** Prefetch available days from both sources once (kept separate per source). */
 async function bootstrapDays() {
   const [gh, ph] = await Promise.all([
     fetchItems({
@@ -108,13 +118,16 @@ async function bootstrapDays() {
       pageSize: 1,
     }),
   ]);
-  availableDays.value = mergeDays(
-    gh.availableDays ?? [],
-    ph.availableDays ?? [],
-  );
+  daysBySource.value = {
+    github: gh.availableDays ?? [],
+    producthunt: ph.availableDays ?? [],
+  };
   if (!selectedDay.value) {
     selectedDay.value =
-      gh.day || ph.day || availableDays.value[0] || "";
+      daysBySource.value[sourceTab.value][0] ||
+      gh.day ||
+      ph.day ||
+      "";
   }
 }
 

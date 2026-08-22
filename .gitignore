@@ -36,4 +36,5 @@ Thumbs.db
 .cursor/*
 !.cursor/rules/
 !.cursor/skills/
+.skill-tracer/
 .skill-overview/
